@@ -73,6 +73,7 @@ namespace CourseWorkConsole
             Random RND = new Random();
             double R = Radius;
             List<Point> Unclustered = new List<Point>(Points);
+            
             while (Unclustered.Count > 0)
             {
                 Point NewCenter = Unclustered[RND.Next(Unclustered.Count)];
@@ -80,18 +81,28 @@ namespace CourseWorkConsole
                 do //Двигаем центр, пока он не устаканится
                 {
                     Center = NewCenter;
-                    double x = 0.0, y = 0.0;
-                    int Cnt = 0;
+                    //double x = 0.0, y = 0.0;
+                    double[] sumCoordTemp = new double[Points[0].getDimension()];
+                    //int Cnt = 0;
                     foreach (Point P in Unclustered)//Считаем новый центр масс
                         if (Dist2(Center, P) < R)
                         {
-                            x += P.getX();
-                            y += P.getY();
-                            Cnt++;
+                            for (int i = 0; i < P.getDimension(); i++)
+                            {
+                                sumCoordTemp[i] += P.getCoordinates()[i];
+                            }
+                            //x += P.getX();
+                            //y += P.getY();
+                            //Cnt++;
                         }
-                    NewCenter = new Point(x / Cnt, y / Cnt);
+                    for (int i = 0; i < sumCoordTemp.Length; i++)
+                    {
+                        sumCoordTemp[i] /= Unclustered.Count;
+                    }
+                    //NewCenter = new Point(x / Cnt, y / Cnt);
+                    NewCenter = new Point(sumCoordTemp);
                 }
-                while (!centersCoincide(Center, NewCenter));//Center != NewCenter
+                while (!Center.equals(NewCenter));//!centersCoincide(Center, NewCenter)
                 List<Point> Cluster = new List<Point>(); //Переносим точки в новый кластер
                 for (int i = Unclustered.Count - 1; i >= 0; i--)
                     if (Dist2(Center, Unclustered[i]) < R)
@@ -105,21 +116,32 @@ namespace CourseWorkConsole
         }
 
         //Проверка на совпадение центров окружностей(точек)
-        private static bool centersCoincide(Point P1, Point P2)
-        {
-            if (P1.getX() == P2.getX() && P1.getY() == P2.getY())
-            {
-                return true;
-            }
-            else return false;
-        }
+        //private static bool centersCoincide(Point P1, Point P2)
+        //{
+        //    if (P1.getX() == P2.getX() && P1.getY() == P2.getY())
+        //    {
+        //        return true;
+        //    }
+        //    else return false;
+        //}
 
         /// <summary>Квадрат расстояния между точками</summary>
         private static double Dist2(Point P1, Point P2)
         {
-            double dx = P1.getX() - P2.getX();
-            double dy = P1.getY() - P2.getY();
-            return Math.Sqrt(dx * dx + dy * dy);
+            double temp = 0;
+            if (P1.getDimension() == P2.getDimension())
+            {
+                for (int i = 0; i < P1.getDimension(); i++)
+                {
+                    temp += Math.Pow(P1.getCoordinates()[i] - P2.getCoordinates()[i], 2);
+                }
+                return Math.Sqrt(temp);
+            }
+            else
+            {
+                Console.WriteLine("Error!\nDimension of two points are different!!!");
+                return Double.PositiveInfinity;
+            }
         }
                       
         public static void printClasters(List<List<Point>> clasters)
@@ -130,7 +152,12 @@ namespace CourseWorkConsole
                 Console.WriteLine("-----------Claster #{0}-----------", i++);
                 foreach (var point in claster)
                 {
-                    Console.WriteLine("({0},  {1})", point.getX(), point.getY());
+                    Console.Write("(");
+                    for (int j = 0; j < point.getDimension(); j++)
+                    {
+                        if (j != point.getDimension()-1) Console.Write("{0},  ", point.getCoordinates()[j]); 
+                        else Console.WriteLine("{0})", point.getCoordinates()[j]);
+                    }
                 }
                 Console.WriteLine();
             }
@@ -141,13 +168,14 @@ namespace CourseWorkConsole
         static void Main(string[] args)
         {
             List<Point> listOfPoints = new List<Point>();
-            listOfPoints.Add(new Point(new double[] { 7, 5 }));
-            listOfPoints.Add(new Point(new double[] { 8, 4 }));
-            listOfPoints.Add(new Point(new double[] { 8, 5 }));
+            listOfPoints.Add(new Point(new double[] { 7, 5, 0 }));
+            listOfPoints.Add(new Point(new double[] { 7, 5, 2 }));
+            listOfPoints.Add(new Point(new double[] { 8, 4, -1 }));
+            listOfPoints.Add(new Point(new double[] { 8, 5, 0 }));
 
-            listOfPoints.Add(new Point(new double[] { 1, 3 }));
-            listOfPoints.Add(new Point(new double[] { 2, 2 }));
-            listOfPoints.Add(new Point(new double[] { 2, 3 }));
+            listOfPoints.Add(new Point(new double[] { 1, 3, 0 }));
+            listOfPoints.Add(new Point(new double[] { 2, 2, 0 }));
+            listOfPoints.Add(new Point(new double[] { 2, 3, 0 }));
 
             //listOfPoints.Add(new Point(1, 3));
             //listOfPoints.Add(new Point(2, 2));

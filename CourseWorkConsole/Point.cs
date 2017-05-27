@@ -28,6 +28,18 @@ namespace CourseWorkConsole
         }
         public double[] getCoordinates() { return this.coordinates; }
         public int getDimension() { return this.dimension; }
+
+        public bool equals(Point point)
+        {
+            for (int i = 0; i < point.getDimension(); i++)
+            {
+                if (this.coordinates[i] != point.getCoordinates()[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         //---------------------------------
         public Point(double x, double y)
         {
