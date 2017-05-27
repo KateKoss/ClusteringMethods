@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace CourseWorkConsole
 {
@@ -83,23 +84,23 @@ namespace CourseWorkConsole
                     Center = NewCenter;
                     //double x = 0.0, y = 0.0;
                     double[] sumCoordTemp = new double[Points[0].getDimension()];
-                    //int Cnt = 0;
+                    //int Count = 0;
                     foreach (Point P in Unclustered)//Считаем новый центр масс
                         if (Dist2(Center, P) < R)
                         {
                             for (int i = 0; i < P.getDimension(); i++)
                             {
-                                sumCoordTemp[i] += P.getCoordinates()[i];
+                                sumCoordTemp[i] += P.getCoordinates()[i];//суммируем соответсвующие координаты кажой точки
                             }
                             //x += P.getX();
                             //y += P.getY();
-                            //Cnt++;
+                            //Count++;
                         }
                     for (int i = 0; i < sumCoordTemp.Length; i++)
                     {
-                        sumCoordTemp[i] /= Unclustered.Count;
+                        sumCoordTemp[i] /= Unclustered.Count;//и делим на количество этих точек(не кластеризированных)
                     }
-                    //NewCenter = new Point(x / Cnt, y / Cnt);
+                    //NewCenter = new Point(x / Count, y / Count);
                     NewCenter = new Point(sumCoordTemp);
                 }
                 while (!Center.equals(NewCenter));//!centersCoincide(Center, NewCenter)
@@ -114,16 +115,6 @@ namespace CourseWorkConsole
             }
             return Result;
         }
-
-        //Проверка на совпадение центров окружностей(точек)
-        //private static bool centersCoincide(Point P1, Point P2)
-        //{
-        //    if (P1.getX() == P2.getX() && P1.getY() == P2.getY())
-        //    {
-        //        return true;
-        //    }
-        //    else return false;
-        //}
 
         /// <summary>Квадрат расстояния между точками</summary>
         private static double Dist2(Point P1, Point P2)
@@ -155,7 +146,7 @@ namespace CourseWorkConsole
                     Console.Write("(");
                     for (int j = 0; j < point.getDimension(); j++)
                     {
-                        if (j != point.getDimension()-1) Console.Write("{0},  ", point.getCoordinates()[j]); 
+                        if (j != point.getDimension()-1) Console.Write("{0};  ", point.getCoordinates()[j]); 
                         else Console.WriteLine("{0})", point.getCoordinates()[j]);
                     }
                 }
@@ -163,55 +154,61 @@ namespace CourseWorkConsole
             }
         }
 
-        const int _DIMENSION = 2; //размерность задачи(_DIMENSION = 2 - координатная плоскость)
-        //static double radius;
+        public static void createPointsFromConcole()
+        {
+            Console.Write("Enter the dimention of problem(x): ");
+            try
+            {
+                int _DIMENSION = Convert.ToInt32(Console.ReadLine());
+                Console.Write("Enter amount of points(x): ");
+                int size = Convert.ToInt32(Console.ReadLine());
+                double[] coord = new double[_DIMENSION];
+
+                for (int i = 0; i < size; i++)
+                {
+                    Console.WriteLine("------------Point #{0}------------", i + 1);
+                    for (int j = 0; j < _DIMENSION; j++)
+                    {
+                        Console.Write("Enter the coordinates[{0}] of the point : ", j + 1);
+                        if (!Double.TryParse(Console.ReadLine(), out coord[j]))
+                        {
+                            Console.WriteLine("Error! Enter double number.");
+                            j--;
+                        }
+                    }
+                    listOfPoints.Add(new Point(coord));
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error! Please, enter integer numbers.\nReload the programm.");
+            }
+        }
+
+        public static void createPointsFromFile()
+        {
+            const string fileName = "Points.txt";
+            StreamReader myReadStream = new StreamReader(fileName);     //создаем поток для чтения
+            string[] temp = myReadStream.ReadLine().Split(' ');         //считываем строку, разделяем на числа
+            _DIMENSION = Convert.ToInt32(temp[0]);
+            double[] coordTemp = new double[_DIMENSION];
+            for (int i = 0; myReadStream.Peek() >= 0; i++)   //repeat rows= ... times
+            {
+                temp = myReadStream.ReadLine().Split(' ');
+                for (int j = 0; j < _DIMENSION; j++)
+                {
+                    coordTemp[j] = Convert.ToDouble(temp[j]);
+                }
+                listOfPoints.Add(new Point(coordTemp));
+            }
+        }
+
+        static int _DIMENSION = 2; //размерность задачи(_DIMENSION = 2 - координатная плоскость)
+        static List<Point> listOfPoints = new List<Point>();
         static void Main(string[] args)
         {
-            List<Point> listOfPoints = new List<Point>();
-            listOfPoints.Add(new Point(new double[] { 7, 5, 0 }));
-            listOfPoints.Add(new Point(new double[] { 7, 5, 2 }));
-            listOfPoints.Add(new Point(new double[] { 8, 4, -1 }));
-            listOfPoints.Add(new Point(new double[] { 8, 5, 0 }));
-
-            listOfPoints.Add(new Point(new double[] { 1, 3, 0 }));
-            listOfPoints.Add(new Point(new double[] { 2, 2, 0 }));
-            listOfPoints.Add(new Point(new double[] { 2, 3, 0 }));
-
-            //listOfPoints.Add(new Point(1, 3));
-            //listOfPoints.Add(new Point(2, 2));
-            //listOfPoints.Add(new Point(2, 3));
-            //listOfPoints.Add(new Point(2, 4));
-            //listOfPoints.Add(new Point(3, 2));
-            //listOfPoints.Add(new Point(3, 3));
-            //listOfPoints.Add(new Point(3, 4));
-            //listOfPoints.Add(new Point(4, 4));
-            //
-            ////listOfPoints.Add(new Point(1.23435, 10003));
-            ////listOfPoints.Add(new Point(2.432, 10002));
-            ////listOfPoints.Add(new Point(2.3465, 10003));
-            ////listOfPoints.Add(new Point(2.342, 10004));
-            ////listOfPoints.Add(new Point(3.435435, 10002));
-            ////listOfPoints.Add(new Point(3.32443, 10003));
-            ////listOfPoints.Add(new Point(3.546, 10004));
-            ////listOfPoints.Add(new Point(4.4365787654, 10004));
-            //
-            //listOfPoints.Add(new Point(7, 5));
-            //listOfPoints.Add(new Point(8, 4));
-            //listOfPoints.Add(new Point(8, 5));
-            //listOfPoints.Add(new Point(8, 6));
-            //listOfPoints.Add(new Point(9, 4));
-            //listOfPoints.Add(new Point(9, 5));
-            //listOfPoints.Add(new Point(9, 6));
-            //listOfPoints.Add(new Point(10, 5));
-            //listOfPoints.Add(new Point(10, 7));
-            //listOfPoints.Add(new Point(3, 8));
-            //listOfPoints.Add(new Point(3, 9));
-            //listOfPoints.Add(new Point(4, 8));
-            //listOfPoints.Add(new Point(4, 9));
-            //listOfPoints.Add(new Point(4, 10));
-            //listOfPoints.Add(new Point(5, 8));
-            //listOfPoints.Add(new Point(5, 9));
-            //listOfPoints.Add(new Point(5, 10));
+            createPointsFromConcole();
+            //Program.createPointsFromFile();
             printClasters(Recluster(listOfPoints, 4));
             //printClasters(Recluster(createNormalizedPoints(listOfPoints, radius), Program.radius));
             Console.ReadKey();
