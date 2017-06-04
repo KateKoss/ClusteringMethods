@@ -20,6 +20,9 @@ namespace CourseWorkConsole
             alg1.findClasters();
             //Algorithm start = new Algorithm();
             //start.Init();
+            alg1.findDecision();
+            KMeansAlgorithm alg2 = new KMeansAlgorithm();
+            alg2.Init();
             Console.Write("\nEnter point id for which you want to find simular points: ");
             int pointId = Convert.ToInt32(Console.ReadLine());
             alg1.findTopTen(pointId);
