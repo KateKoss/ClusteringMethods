@@ -12,14 +12,57 @@ namespace CourseWorkConsole
         private int _DIMENSION; //размерность задачи(_DIMENSION = 2 - координатная плоскость)
         private List<Point> listOfPoints = new List<Point>();
         private double radius;
-
-        public void findDecision()
+        List<List<Point>> clasters;
+        //private int clasterIdToFind;
+        public void findClasters()
         {
             if (listOfPoints.Count != 0)
             {
                 printClasters(Recluster(listOfPoints));
             }
             else Console.WriteLine("At first you need have points!");
+        }
+
+        public void findTopTen(int pointIdForFinding)
+        {
+            int clasterIndex = -1;
+            int pointIndex = -1;
+            foreach (var claster in clasters)
+            {
+                if (clasterIndex != -1) break;
+                else
+                {
+                    foreach (var point in claster)
+                    {
+                        if (point.getPointId() == pointIdForFinding)
+                        {
+                            pointIndex = claster.IndexOf(point);
+                            clasterIndex = clasters.IndexOf(claster);
+                            break;
+                        }
+                    }
+                }
+            }
+            foreach (var point in clasters[clasterIndex])
+            {
+                point.setDistanceToSomePoint(Dist2(point, clasters[clasterIndex][pointIndex]));
+            }
+            var orderedClaster = clasters[clasterIndex].OrderBy(s => s.getDistanceToSomePoint());
+            int count = 0;
+            foreach (var point in orderedClaster)  //вывод топ 10 ближайших точек
+            {
+                if (point.getPointId() != pointIdForFinding)
+                {
+                    count++;
+                    Console.Write("id = {0} | (", point.getPointId());
+                    for (int j = 0; j < point.getDimension(); j++)
+                    {
+                        if (j != point.getDimension() - 1) Console.Write("{0};  ", point.getCoordinates()[j]);
+                        else Console.WriteLine("{0})", point.getCoordinates()[j]);
+                    }
+                    if (count == 10) break;
+                }
+            }
         }
         /// <summary>Разбивает список точек на несколько кластеров, которые тоже хранятся как списки.</summary>
         /// <param name="Points">Список точек</param>
@@ -86,10 +129,11 @@ namespace CourseWorkConsole
                 //    }
                 //}
             }
+            clasters = Result;
             return Result;
         }
 
-        /// <summary>Квадрат расстояния между точками</summary>
+        /// <summary>Расстояние между точками</summary>
         private double Dist2(Point P1, Point P2)
         {
             double temp = 0;
@@ -128,12 +172,11 @@ namespace CourseWorkConsole
                 Console.WriteLine("-----------Claster #{0}-----------", i++);
                 foreach (var point in claster)
                 {
-                    Console.Write("(");
+                    Console.Write("id = {0} | (", point.getPointId());
                     for (int j = 0; j < point.getDimension(); j++)
                     {
                         if (j != point.getDimension() - 1) Console.Write("{0};  ", point.getCoordinates()[j]);
                         else Console.WriteLine("{0})", point.getCoordinates()[j]);
-
                     }
                 }
                 Console.WriteLine();

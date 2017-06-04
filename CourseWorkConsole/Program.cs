@@ -17,11 +17,13 @@ namespace CourseWorkConsole
             alg1.createPointsFromFile();
             //alg1.createRandomPoints();
             //alg1.createPointsFromConcole();
-            //alg1.findDecision();
-            Algorithm start = new Algorithm();
-            start.Init();
+            alg1.findClasters();
+            //Algorithm start = new Algorithm();
+            //start.Init();
+            Console.Write("\nEnter point id for which you want to find simular points: ");
+            int pointId = Convert.ToInt32(Console.ReadLine());
+            alg1.findTopTen(pointId);
 
-            
             Console.ReadKey();
         }
     }
