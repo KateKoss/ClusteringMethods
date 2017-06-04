@@ -18,8 +18,8 @@ namespace CourseWorkConsole
             //alg1.createRandomPoints();
             //alg1.createPointsFromConcole();
             //alg1.findDecision();
-            Algorithm start = new Algorithm();
-            start.Init();
+            KMeansAlgorithm alg2 = new KMeansAlgorithm();
+            alg2.Init();
 
             
             Console.ReadKey();
