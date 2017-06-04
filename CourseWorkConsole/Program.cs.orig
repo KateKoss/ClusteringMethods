@@ -14,16 +14,21 @@ namespace CourseWorkConsole
         {
             ForelAlgorithm alg1 = new ForelAlgorithm();
 
-            alg1.createPointsFromFile();
+            //alg1.createPointsFromFile();
             //alg1.createRandomPoints();
             //alg1.createPointsFromConcole();
+<<<<<<< HEAD
             alg1.findClasters();
-
+            //Algorithm start = new Algorithm();
+            //start.Init();
+            Console.Write("\nEnter point id for which you want to find simular points: ");
+            int pointId = Convert.ToInt32(Console.ReadLine());
+            alg1.findTopTen(pointId);
+=======
+            alg1.findDecision();
             KMeansAlgorithm alg2 = new KMeansAlgorithm();
             alg2.Init();
-            //Console.Write("\nEnter point id for which you want to find simular points: ");
-            //int pointId = Convert.ToInt32(Console.ReadLine());
-            //alg1.findTopTen(pointId);
+>>>>>>> b7362bbcdcf0903dd9dff5ca544184dc02ce8307
 
             Console.ReadKey();
         }
