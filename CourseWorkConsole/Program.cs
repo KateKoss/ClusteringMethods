@@ -14,10 +14,10 @@ namespace CourseWorkConsole
         {
             ForelAlgorithm alg1 = new ForelAlgorithm();
 
-            alg1.createPointsFromFile();
+            //alg1.createPointsFromFile();
             //alg1.createRandomPoints();
             //alg1.createPointsFromConcole();
-            //alg1.findDecision();
+            alg1.findDecision();
             KMeansAlgorithm alg2 = new KMeansAlgorithm();
             alg2.Init();
 
