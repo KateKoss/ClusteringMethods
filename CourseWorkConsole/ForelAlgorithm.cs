@@ -12,14 +12,57 @@ namespace CourseWorkConsole
         private int _DIMENSION; //размерность задачи(_DIMENSION = 2 - координатная плоскость)
         private List<Point> listOfPoints = new List<Point>();
         private double radius;
-
-        public void findDecision()
+        List<List<Point>> clasters;
+        //private int clasterIdToFind;
+        public void findClasters()
         {
             if (listOfPoints.Count != 0)
             {
                 printClasters(Recluster(listOfPoints));
             }
             else Console.WriteLine("At first you need have points!");
+        }
+
+        public void findTopTen(int pointIdForFinding)
+        {
+            int clasterIndex = -1;
+            int pointIndex = -1;
+            foreach (var claster in clasters)
+            {
+                if (clasterIndex != -1) break;
+                else
+                {
+                    foreach (var point in claster)
+                    {
+                        if (point.getPointId() == pointIdForFinding)
+                        {
+                            pointIndex = claster.IndexOf(point);
+                            clasterIndex = clasters.IndexOf(claster);
+                            break;
+                        }
+                    }
+                }
+            }
+            foreach (var point in clasters[clasterIndex])
+            {
+                point.setDistanceToSomePoint(Dist2(point, clasters[clasterIndex][pointIndex]));
+            }
+            var orderedClaster = clasters[clasterIndex].OrderBy(s => s.getDistanceToSomePoint());
+            int count = 0;
+            foreach (var point in orderedClaster)  //вывод топ 10 ближайших точек
+            {
+                if (point.getPointId() != pointIdForFinding)
+                {
+                    count++;
+                    Console.Write("id = {0} | (", point.getPointId());
+                    for (int j = 0; j < point.getDimension(); j++)
+                    {
+                        if (j != point.getDimension() - 1) Console.Write("{0};  ", point.getCoordinates()[j]);
+                        else Console.WriteLine("{0})", point.getCoordinates()[j]);
+                    }
+                    if (count == 10) break;
+                }
+            }
         }
         /// <summary>Разбивает список точек на несколько кластеров, которые тоже хранятся как списки.</summary>
         /// <param name="Points">Список точек</param>
@@ -86,10 +129,11 @@ namespace CourseWorkConsole
                 //    }
                 //}
             }
+            clasters = Result;
             return Result;
         }
 
-        /// <summary>Квадрат расстояния между точками</summary>
+        /// <summary>Расстояние между точками</summary>
         private double Dist2(Point P1, Point P2)
         {
             double temp = 0;
@@ -128,12 +172,11 @@ namespace CourseWorkConsole
                 Console.WriteLine("-----------Claster #{0}-----------", i++);
                 foreach (var point in claster)
                 {
-                    Console.Write("(");
+                    Console.Write("id = {0} | (", point.getPointId());
                     for (int j = 0; j < point.getDimension(); j++)
                     {
                         if (j != point.getDimension() - 1) Console.Write("{0};  ", point.getCoordinates()[j]);
                         else Console.WriteLine("{0})", point.getCoordinates()[j]);
-
                     }
                 }
                 Console.WriteLine();
@@ -199,24 +242,31 @@ namespace CourseWorkConsole
 
         public void createPointsFromFile()
         {
-            const string fileName = "Points.txt";
-            StreamReader myReadStream = new StreamReader(fileName);     //создаем поток для чтения
-            string[] temp = myReadStream.ReadLine().Split(' ');         //считываем строку, разделяем на числа
-            _DIMENSION = Convert.ToInt32(temp[0]);
-            temp = myReadStream.ReadLine().Split(' ');
-            myReadStream.Peek();
-            radius = Convert.ToDouble(temp[0]);
-            Console.WriteLine("Dimension of point(random): {0}", _DIMENSION);
-            Console.WriteLine("Claster radius(random): {0}", radius);
-            double[] coordTemp = new double[_DIMENSION];
-            for (int i = 0; myReadStream.Peek() >= 0; i++)   //repeat rows= ... times
+            try
             {
+                const string fileName = "Points.txt";
+                StreamReader myReadStream = new StreamReader(fileName);     //создаем поток для чтения
+                string[] temp = myReadStream.ReadLine().Split(' ');         //считываем строку, разделяем на числа
+                _DIMENSION = Convert.ToInt32(temp[0]);
                 temp = myReadStream.ReadLine().Split(' ');
-                for (int j = 0; j < _DIMENSION; j++)
+                myReadStream.Peek();
+                radius = Convert.ToDouble(temp[0]);
+                Console.WriteLine("Dimension of point(random): {0}", _DIMENSION);
+                Console.WriteLine("Claster radius(random): {0}", radius);
+                double[] coordTemp = new double[_DIMENSION];
+                for (int i = 0; myReadStream.Peek() >= 0; i++)   //repeat rows= ... times
                 {
-                    coordTemp[j] = Convert.ToDouble(temp[j]);
+                    temp = myReadStream.ReadLine().Split(' ');
+                    for (int j = 0; j < _DIMENSION; j++)
+                    {
+                        coordTemp[j] = Convert.ToDouble(temp[j]);
+                    }
+                    listOfPoints.Add(new Point(coordTemp));
                 }
-                listOfPoints.Add(new Point(coordTemp));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
 

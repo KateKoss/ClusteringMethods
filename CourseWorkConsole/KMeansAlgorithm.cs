@@ -14,9 +14,16 @@ namespace CourseWorkConsole
         private int numberOfClusters = 0;
         private int n = 0;
 
-        public void Init()
+        public KMeansAlgorithm(int n, int numberOfClusters, List<DataPointKmeans> rawDataToCluster)
         {
-            InitilizeRawData();
+            this.n = n;
+            this.numberOfClusters = numberOfClusters;
+            this.rawDataToCluster = rawDataToCluster;
+        }
+
+        public void Init(int numberOfPoints)
+        {
+            InitilizeRawData(numberOfPoints);
 
             for (int i = 0; i < numberOfClusters; i++)
             {
@@ -26,8 +33,8 @@ namespace CourseWorkConsole
             ShowData(rawDataToCluster);
             NormalizeData();
 
-            System.Console.WriteLine("Data AFTER normalizing-------------------");
-            ShowData(normalizedDataToCluster);
+            //System.Console.WriteLine("Data AFTER normalizing-------------------");
+            //ShowData(normalizedDataToCluster);
             Cluster(normalizedDataToCluster, numberOfClusters);
             StringBuilder sb = new StringBuilder();
             var group = rawDataToCluster.GroupBy(s => s.Cluster).OrderBy(s => s.Key);
@@ -45,6 +52,8 @@ namespace CourseWorkConsole
             System.Console.WriteLine(sb);
 
             FindTopNearestPointsInClaster(group);
+
+
         }
 
         public void FindTopNearestPointsInClaster(IOrderedEnumerable<IGrouping<int, DataPointKmeans>> group)
@@ -57,23 +66,41 @@ namespace CourseWorkConsole
                 StringBuilder sb = new StringBuilder();
                 do
                 {
-                    sb.Clear();
+                    string s = "";
                     System.Console.Write("\nEnter point id for which you want to find simular points: ");
-
                     ConsoleKeyInfo key;
-                    while ((key = Console.ReadKey(true)).Key != ConsoleKey.Enter) // пока не нажали Enter
-                    {
-                        char c = key.KeyChar;
-                        if ((Char.IsNumber(key.KeyChar)))
-                        {
-                            Console.Write(c);
-                            sb.Append(c);
 
+                    do
+                    {
+                        key = Console.ReadKey(true);
+                        if (key.Key != ConsoleKey.Backspace)
+                        {
+                            double val = 0;
+                            bool _x = double.TryParse(key.KeyChar.ToString(), out val);
+                            // Convert.ToInt32(key.KeyChar) == 46)//44-coma, 46-spot
+                            if (_x)
+                            {
+                                s += key.KeyChar;
+                                Console.Write(key.KeyChar);
+                            }
+                        }
+                        else
+                        {
+                            if (key.Key == ConsoleKey.Backspace && s.Length > 0)
+                            {
+                                s = s.Substring(0, (s.Length - 1));
+                                Console.Write("\b \b");
+                            }
                         }
                     }
-                    pointIdForFinding = Int32.Parse(sb.ToString());
+                    // Stops Receving Keys Once Enter is Pressed
+                    while (key.Key != ConsoleKey.Enter);
+
+                    Console.WriteLine();
+                    //Console.WriteLine("The Value You entered is : " + s);
+                    pointIdForFinding = Int32.Parse(s);
                 } while (pointIdForFinding <= 0);
-                sb.Clear();
+
 
 
                 int clusterIdForFinding = -1;
@@ -95,7 +122,7 @@ namespace CourseWorkConsole
                 }
 
                 int countOfPointInCluster = 0;
-                
+
 
                 if (clusterIdForFinding != -1)
                 {
@@ -127,8 +154,8 @@ namespace CourseWorkConsole
                             k++;
                         }
 
-                        double[] temp = new double [2];
-                        for (int j = 0; j < countOfPointInCluster; j++) // найпростіша бульбашкова сортування 
+                        double[] temp = new double[2];
+                        for (int j = 0; j < countOfPointInCluster; j++) // найпростіше бульбашкове сортування 
                             for (int i = 0; i < countOfPointInCluster - 1; i++)
                             {
                                 if (distances[i, 0] > distances[i + 1, 0])
@@ -146,28 +173,47 @@ namespace CourseWorkConsole
                     }
                     else sb.AppendLine("\nThere are no points in cluster # " + clusterIdForFinding + ".");
                     System.Console.WriteLine(sb);
-                    sb.Clear();
+
                     do
                     {
-                        sb.Clear();
+                        string s = "";
                         System.Console.Write("\nEnter top to find (must be less then {0}): ", countOfPointInCluster);
-
                         ConsoleKeyInfo key;
-                        while ((key = Console.ReadKey(true)).Key != ConsoleKey.Enter) // пока не нажали Enter
-                        {
-                            char c = key.KeyChar;
-                            if ((Char.IsNumber(key.KeyChar)))
-                            {
-                                Console.Write(c);
-                                sb.Append(c);
 
+                        do
+                        {
+                            key = Console.ReadKey(true);
+                            if (key.Key != ConsoleKey.Backspace)
+                            {
+                                double val = 0;
+                                bool _x = double.TryParse(key.KeyChar.ToString(), out val);
+                                // Convert.ToInt32(key.KeyChar) == 46)//44-coma, 46-spot
+                                if (_x)
+                                {
+                                    s += key.KeyChar;
+                                    Console.Write(key.KeyChar);
+                                }
+                            }
+                            else
+                            {
+                                if (key.Key == ConsoleKey.Backspace && s.Length > 0)
+                                {
+                                    s = s.Substring(0, (s.Length - 1));
+                                    Console.Write("\b \b");
+                                }
                             }
                         }
-                        findTop = Int32.Parse(sb.ToString());
+                        // Stops Receving Keys Once Enter is Pressed
+                        while (key.Key != ConsoleKey.Enter);
+
+                        Console.WriteLine();
+                        //Console.WriteLine("The Value You entered is : " + s);
+                        findTop = Int32.Parse(s);
                     } while (findTop <= 0 || findTop > countOfPointInCluster);
+
                     sb.Clear();
 
-                    if (distances.Length > 0)
+                    if (distances.Length > 1)
                     {
                         if (countOfPointInCluster != 0)
                         {
@@ -181,9 +227,12 @@ namespace CourseWorkConsole
                             }
                             foreach (var value in topList)
                             {
-                                sb.Append(value.pointId + " | " + value.ToString());
-                                sb.AppendLine();
-                                sb.AppendLine("------------------------------");
+                                if (value.pointId != pointIdForFinding)
+                                {
+                                    sb.Append(value.pointId + " | " + value.ToString());
+                                    sb.AppendLine();
+                                    sb.AppendLine("------------------------------");
+                                }
                             }
                             System.Console.WriteLine(sb);
                         }
@@ -192,75 +241,14 @@ namespace CourseWorkConsole
                 }
                 else System.Console.WriteLine("\nNot found.");
 
-                
+
             } while (true);
         }
-              
-        private void InitilizeRawData()
+
+        private void InitilizeRawData(int numberOfPoints)
         {
             if (rawDataToCluster.Count == 0)
             {
-                StringBuilder str = new StringBuilder();
-                int numberOfPoints;
-
-                do
-                {
-                    str.Clear();
-                    System.Console.Write("\nEnter n - number of point coordinates: ");
-
-                    ConsoleKeyInfo key;
-                    while ((key = Console.ReadKey(true)).Key != ConsoleKey.Enter) // пока не нажали Enter
-                    {
-                        char c = key.KeyChar;
-                        if ((Char.IsNumber(key.KeyChar)))
-                        {
-                            Console.Write(c);
-                            str.Append(c);
-
-                        }
-                    }
-                    n = Int32.Parse(str.ToString());
-                } while (n <= 0);
-
-                str.Clear();
-                do
-                {
-                    str.Clear();
-                    System.Console.Write("\nEnter number of n-dimensional points [more than zero]: ");
-
-                    ConsoleKeyInfo key;
-                    while ((key = Console.ReadKey(true)).Key != ConsoleKey.Enter) // пока не нажали Enter
-                    {
-                        char c = key.KeyChar;
-                        if ((Char.IsNumber(key.KeyChar)))
-                        {
-                            Console.Write(c);
-                            str.Append(c);
-                        }
-                    }
-                    numberOfPoints = Int32.Parse(str.ToString());
-                } while (numberOfPoints <= 0);
-
-                str.Clear();
-                do
-                {
-                    str.Clear();
-                    System.Console.Write("\nEnter a desired number of clusters [must be 0< and <{0}]: ", numberOfPoints);
-
-                    ConsoleKeyInfo key;
-                    while ((key = Console.ReadKey(true)).Key != ConsoleKey.Enter) // пока не нажали Enter
-                    {
-                        char c = key.KeyChar;
-                        if ((Char.IsNumber(key.KeyChar)))
-                        {
-                            Console.Write(c);
-                            str.Append(c);
-
-                        }
-                    }
-                    numberOfClusters = Int32.Parse(str.ToString());
-                } while (numberOfClusters > numberOfPoints || numberOfClusters <= 0);
-
                 for (int i = 0; i < numberOfPoints; i++)
                 {
                     DataPointKmeans dp = new DataPointKmeans(n);
@@ -452,8 +440,7 @@ namespace CourseWorkConsole
                     sb.AppendLine("No change.");
                 }
                 sb.AppendLine("------------------------------");
-                System.Console.WriteLine(sb);
-                //txtIterations.Text += sb.ToString();
+                //System.Console.WriteLine(sb);                
             }
             if (changed == false)
                 return false;

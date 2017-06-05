@@ -16,9 +16,17 @@ namespace CourseWorkConsole
             {
                 this.coordinates[i] = coordinates[i];
             }
+            countId++;
+            pointId = countId;
         }
         private int dimension;//размерность
         private double[] coordinates;
+        private static int countId = 0;
+        private int pointId;
+        private double distanceToSomePoint;
+        public double getDistanceToSomePoint() { return this.distanceToSomePoint; }
+        public void setDistanceToSomePoint(double dis) { this.distanceToSomePoint = dis; }
+        public int getPointId() { return this.pointId; }
         public void setCoordinates(double[] coordinates)
         {
             for (int i = 0; i < coordinates.Length; i++)
