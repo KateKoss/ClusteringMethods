@@ -18,6 +18,8 @@ namespace CourseWorkConsole
             //alg1.createRandomPoints();
             //alg1.createPointsFromConcole();
             alg1.findDecision();
+
+
             KMeansAlgorithm alg2 = new KMeansAlgorithm();
             alg2.Init();
 
