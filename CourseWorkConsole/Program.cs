@@ -278,7 +278,7 @@ namespace CourseWorkConsole
                     break;
             }
 
-            Console.WriteLine("\n-----------------------FOREL ALGORITHM----------------------");
+            Console.WriteLine("\n-----------------------FOREL ALGORITHM----------------------\n\n");
             ForelAlgorithm alg1 = new ForelAlgorithm();
 
             alg1.createPointsFromFile();
