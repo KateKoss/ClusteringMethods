@@ -13,7 +13,7 @@ namespace CourseWorkConsole
         static void Main(string[] args)
         {
             int numberOfPoints = 4;
-            int n = 2;
+            int _DIMENSION = 2;
             int numberOfClusters = 2;
             double radius = 1;
             int caseSwitch;
@@ -73,7 +73,7 @@ namespace CourseWorkConsole
                         do
                         {
                             string s = "";
-                            System.Console.Write("\nEnter n - number of point coordinates: ");
+                            System.Console.Write("\nEnter n - dimention(number of point coordinates): ");
                             ConsoleKeyInfo key;
 
                             do
@@ -104,15 +104,14 @@ namespace CourseWorkConsole
 
                             Console.WriteLine();
                             //Console.WriteLine("The Value You entered is : " + s);
-                            n = Int32.Parse(s);
-                            //Console.ReadKey();
+                            _DIMENSION = Int32.Parse(s);
                             
-                        } while (n <= 0);
+                        } while (_DIMENSION <= 0);
 
                         do
                         {
                             string s = "";
-                            System.Console.Write("\nEnter number of n-dimensional points [more than zero]: ");
+                            System.Console.Write("\nEnter amount of " + _DIMENSION + "-dimensional points [more than zero]: ");
                             ConsoleKeyInfo key;
 
                             do
@@ -225,14 +224,29 @@ namespace CourseWorkConsole
                             //Console.WriteLine("The Value You entered is : " + s);
                             radius = Convert.ToDouble(s);
                         } while (radius <= 0);
-                        
 
+                        Random rnd = new Random();
+                        double[] tempCoord = new double[_DIMENSION];
                         //K_MEANS
                         for (int i = 0; i < numberOfPoints; i++)
                         {
-                            DataPointKmeans dp = new DataPointKmeans(n);
+                            DataPointKmeans dp = new DataPointKmeans(_DIMENSION);
                             dp.pointId = i;
                             rawDataToCluster.Add(dp);
+                        }
+
+                        //объеденить тут запись точек в наши классы!
+
+                        //FOREL
+                        for (int i = 0; i < numberOfPoints; i++)
+                        {
+                            Console.WriteLine("------------Point #{0}------------", i + 1);
+                            for (int j = 0; j < _DIMENSION; j++)
+                            {
+                                tempCoord[j] = rnd.Next(1, 1000) - 200;
+                                Console.WriteLine("Coordinate[{0}] of the point : {1}", j + 1, tempCoord[j]);
+                            }
+                            listOfPoints.Add(new Point(tempCoord));
                         }
                     }
                     break;
@@ -243,19 +257,21 @@ namespace CourseWorkConsole
                         {
                             StreamReader myReadStream = new StreamReader(fileName);     //создаем поток для чтения
                             string[] temp = myReadStream.ReadLine().Split(' ');         //считываем строку, разделяем на числа
-                            n = Convert.ToInt32(temp[0]);
+                            _DIMENSION = Convert.ToInt32(temp[0]);
                             temp = myReadStream.ReadLine().Split(' ');
                             myReadStream.Peek();
-
-
                             radius = Convert.ToDouble(temp[0]);
-                            Console.WriteLine("Dimension of point(random): {0}", n);
-                            Console.WriteLine("Claster radius(random): {0}", radius);
-                            double[] coordTemp = new double[n];
+
+                            temp = myReadStream.ReadLine().Split(' ');
+                            myReadStream.Peek();
+                            numberOfClusters = Convert.ToInt32(temp[0]);
+                            Console.WriteLine("Dimension of point: {0}", _DIMENSION);
+                            Console.WriteLine("Claster radius: {0}", radius);
+                            double[] coordTemp = new double[_DIMENSION];
                             for (int i = 0; myReadStream.Peek() >= 0; i++)   //repeat rows= ... times
                             {
                                 temp = myReadStream.ReadLine().Split(' ');
-                                for (int j = 0; j < n; j++)
+                                for (int j = 0; j < _DIMENSION; j++)
                                 {
                                     //FOREl
                                     coordTemp[j] = Convert.ToDouble(temp[j]);
@@ -263,7 +279,7 @@ namespace CourseWorkConsole
                                 listOfPoints.Add(new Point(coordTemp));
 
                                 //K-MEANS
-                                DataPointKmeans dp = new DataPointKmeans(n);
+                                DataPointKmeans dp = new DataPointKmeans(_DIMENSION);
                                 dp.pointId = i;
                                 dp.a = coordTemp;
                                 dp.Cluster = i;
@@ -279,15 +295,15 @@ namespace CourseWorkConsole
             }
 
             Console.WriteLine("\n-----------------------FOREL ALGORITHM----------------------\n\n");
-            ForelAlgorithm alg1 = new ForelAlgorithm();
+            ForelAlgorithm alg1 = new ForelAlgorithm(_DIMENSION, listOfPoints, radius);
 
-            alg1.createPointsFromFile();
+            //alg1.createPointsFromFile();
             //alg1.createRandomPoints();
             //alg1.createPointsFromConcole();
             alg1.findClasters();
 
             Console.WriteLine("\n\n-----------------------K-MEANS ALGORITHM----------------------\n\n");
-            KMeansAlgorithm alg2 = new KMeansAlgorithm(n, numberOfClusters, rawDataToCluster);
+            KMeansAlgorithm alg2 = new KMeansAlgorithm(_DIMENSION, numberOfClusters, rawDataToCluster);
             alg2.Init(numberOfPoints);
             //Console.Write("\nEnter point id for which you want to find simular points: ");
             //int pointId = Convert.ToInt32(Console.ReadLine());

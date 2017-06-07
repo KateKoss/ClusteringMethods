@@ -14,6 +14,13 @@ namespace CourseWorkConsole
         private double radius;
         List<List<Point>> clasters;
         //private int clasterIdToFind;
+
+        public ForelAlgorithm(int _DIMENSION, List<Point> listOfPoints, double radius)
+        {
+            this._DIMENSION = _DIMENSION;
+            this.listOfPoints = listOfPoints;
+            this.radius = radius;
+        }
         public void findClasters()
         {
             if (listOfPoints.Count != 0)
@@ -251,8 +258,8 @@ namespace CourseWorkConsole
                 temp = myReadStream.ReadLine().Split(' ');
                 myReadStream.Peek();
                 radius = Convert.ToDouble(temp[0]);
-                Console.WriteLine("Dimension of point(random): {0}", _DIMENSION);
-                Console.WriteLine("Claster radius(random): {0}", radius);
+                Console.WriteLine("Dimension of point: {0}", _DIMENSION);
+                Console.WriteLine("Claster radius: {0}", radius);
                 double[] coordTemp = new double[_DIMENSION];
                 for (int i = 0; myReadStream.Peek() >= 0; i++)   //repeat rows= ... times
                 {
