@@ -13,12 +13,14 @@ namespace CourseWorkConsole
         List<DataPointKmeans> clusters = new List<DataPointKmeans>();
         private int numberOfClusters = 0;
         private int n = 0;
+        private double radius = 0;
 
-        public KMeansAlgorithm(int n, int numberOfClusters, List<DataPointKmeans> rawDataToCluster)
+        public KMeansAlgorithm(int n, int numberOfClusters, List<DataPointKmeans> rawDataToCluster, double radius)
         {
             this.n = n;
             this.numberOfClusters = numberOfClusters;
             this.rawDataToCluster = rawDataToCluster;
+            this.radius = radius;
         }
 
         public void Init(int numberOfPoints)
@@ -29,8 +31,8 @@ namespace CourseWorkConsole
             {
                 clusters.Add(new DataPointKmeans(n) { Cluster = i });
             }
-            System.Console.WriteLine("Data BEFORE normalizing-------------------");
-            ShowData(rawDataToCluster);
+            //System.Console.WriteLine("Data BEFORE normalizing-------------------");
+            //ShowData(rawDataToCluster);
             NormalizeData();
 
             //System.Console.WriteLine("Data AFTER normalizing-------------------");
@@ -51,12 +53,12 @@ namespace CourseWorkConsole
             }
             System.Console.WriteLine(sb);
 
-            FindTopNearestPointsInClaster(group);
+            FindTopNearestPointsInClaster(group, numberOfPoints);
 
 
         }
 
-        public void FindTopNearestPointsInClaster(IOrderedEnumerable<IGrouping<int, DataPointKmeans>> group)
+        public void FindTopNearestPointsInClaster(IOrderedEnumerable<IGrouping<int, DataPointKmeans>> group, int numberOfPoints)
         {
             double[,] distances;
             int pointIdForFinding;
@@ -219,8 +221,8 @@ namespace CourseWorkConsole
                         {
                             DataPointKmeans top = new DataPointKmeans(n);
                             List<DataPointKmeans> topList = new List<DataPointKmeans>();
-                            sb.AppendLine("\nTop " + findTop + " in cluster # " + clusterIdForFinding + ":");
-                            for (int i = 0; i < findTop; i++)
+                            sb.AppendLine("\n----------------K-MEANS---------------\nTop " + findTop + " in cluster # " + clusterIdForFinding + ":");
+                            for (int i = 0; i < findTop+1; i++)
                             {
                                 top = rawDataToCluster.SingleOrDefault(s => s.pointId == distances[i, 1]);
                                 topList.Add(top);
@@ -235,6 +237,29 @@ namespace CourseWorkConsole
                                 }
                             }
                             System.Console.WriteLine(sb);
+                            sb.Clear();
+
+
+                           // double[,] tempCoord = new double[numberOfPoints, n];
+                            List<Point> listOfPoints = new List<Point>();
+                            //FOREL
+                            for (int i = 0; i < numberOfPoints; i++)
+                            {
+                                double[] tempCoord2 = new double[n];
+                                //Console.WriteLine("------------Point #{0}------------", i + 1);
+                                for (int j = 0; j < n; j++)
+                                {
+                                    //tempCoord[i, j] = rawDataToCluster[i].a;
+                                    //Console.WriteLine("Coordinate[{0}] of the point : {1}", j + 1, tempCoord[i, j]);
+                                    tempCoord2[j] = rawDataToCluster[i].a[j];
+                                }
+                                listOfPoints.Add(new Point(tempCoord2));
+                            }
+
+                            sb.AppendLine("\n\n----------------FOREL---------------\nTop 10 in cluster # " + clusterIdForFinding + ":");
+                            System.Console.WriteLine(sb);
+                            ForelAlgorithm fa = new ForelAlgorithm(n,listOfPoints, radius);
+                            fa.findTopTen(pointIdForFinding);
                         }
                     }
                     else System.Console.WriteLine("\nNot found.");
