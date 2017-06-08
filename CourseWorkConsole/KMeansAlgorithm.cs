@@ -53,55 +53,56 @@ namespace CourseWorkConsole
             }
             System.Console.WriteLine(sb);
 
-            FindTopNearestPointsInClaster(group, numberOfPoints);
+            //FindTopNearestPointsInClaster();
 
 
         }
 
-        public void FindTopNearestPointsInClaster(IOrderedEnumerable<IGrouping<int, DataPointKmeans>> group, int numberOfPoints)
+        public void FindTopNearestPointsInClaster(int pointIdForFinding)
         {
+            var group = rawDataToCluster.GroupBy(s => s.Cluster).OrderBy(s => s.Key);
             double[,] distances;
-            int pointIdForFinding;
+            
             int findTop;
-            do
-            {
+            //do
+            //{
                 StringBuilder sb = new StringBuilder();
-                do
-                {
-                    string s = "";
-                    System.Console.Write("\nEnter point id for which you want to find simular points: ");
-                    ConsoleKeyInfo key;
+                //do
+                //{
+                //    string s = "";
+                //    System.Console.Write("\nEnter point id for which you want to find simular points: ");
+                //    ConsoleKeyInfo key;
 
-                    do
-                    {
-                        key = Console.ReadKey(true);
-                        if (key.Key != ConsoleKey.Backspace)
-                        {
-                            double val = 0;
-                            bool _x = double.TryParse(key.KeyChar.ToString(), out val);
-                            // Convert.ToInt32(key.KeyChar) == 46)//44-coma, 46-spot
-                            if (_x)
-                            {
-                                s += key.KeyChar;
-                                Console.Write(key.KeyChar);
-                            }
-                        }
-                        else
-                        {
-                            if (key.Key == ConsoleKey.Backspace && s.Length > 0)
-                            {
-                                s = s.Substring(0, (s.Length - 1));
-                                Console.Write("\b \b");
-                            }
-                        }
-                    }
-                    // Stops Receving Keys Once Enter is Pressed
-                    while (key.Key != ConsoleKey.Enter);
+                //    do
+                //    {
+                //        key = Console.ReadKey(true);
+                //        if (key.Key != ConsoleKey.Backspace)
+                //        {
+                //            double val = 0;
+                //            bool _x = double.TryParse(key.KeyChar.ToString(), out val);
+                //            // Convert.ToInt32(key.KeyChar) == 46)//44-coma, 46-spot
+                //            if (_x)
+                //            {
+                //                s += key.KeyChar;
+                //                Console.Write(key.KeyChar);
+                //            }
+                //        }
+                //        else
+                //        {
+                //            if (key.Key == ConsoleKey.Backspace && s.Length > 0)
+                //            {
+                //                s = s.Substring(0, (s.Length - 1));
+                //                Console.Write("\b \b");
+                //            }
+                //        }
+                //    }
+                //    // Stops Receving Keys Once Enter is Pressed
+                //    while (key.Key != ConsoleKey.Enter);
 
-                    Console.WriteLine();
-                    //Console.WriteLine("The Value You entered is : " + s);
-                    pointIdForFinding = Int32.Parse(s);
-                } while (pointIdForFinding <= 0);
+                //    Console.WriteLine();
+                //    //Console.WriteLine("The Value You entered is : " + s);
+                //    pointIdForFinding = Int32.Parse(s);
+                //} while (pointIdForFinding <= 0);
 
 
 
@@ -179,7 +180,7 @@ namespace CourseWorkConsole
                     do
                     {
                         string s = "";
-                        System.Console.Write("\nEnter top to find (must be less then {0}): ", countOfPointInCluster);
+                        System.Console.Write("\nPoint #{1}. Enter top to find (must be less then {0}): ", countOfPointInCluster, pointIdForFinding);
                         ConsoleKeyInfo key;
 
                         do
@@ -221,7 +222,7 @@ namespace CourseWorkConsole
                         {
                             DataPointKmeans top = new DataPointKmeans(n);
                             List<DataPointKmeans> topList = new List<DataPointKmeans>();
-                            sb.AppendLine("\n----------------K-MEANS---------------\nTop " + findTop + " in cluster # " + clusterIdForFinding + ":");
+                            sb.AppendLine("\n----------------K-MEANS---------------\n\nTop " + findTop + " in cluster # " + clusterIdForFinding + ":\n");
                             for (int i = 0; i < findTop+1; i++)
                             {
                                 top = rawDataToCluster.SingleOrDefault(s => s.pointId == distances[i, 1]);
@@ -240,26 +241,26 @@ namespace CourseWorkConsole
                             sb.Clear();
 
 
-                           // double[,] tempCoord = new double[numberOfPoints, n];
-                            List<Point> listOfPoints = new List<Point>();
-                            //FOREL
-                            for (int i = 0; i < numberOfPoints; i++)
-                            {
-                                double[] tempCoord2 = new double[n];
-                                //Console.WriteLine("------------Point #{0}------------", i + 1);
-                                for (int j = 0; j < n; j++)
-                                {
-                                    //tempCoord[i, j] = rawDataToCluster[i].a;
-                                    //Console.WriteLine("Coordinate[{0}] of the point : {1}", j + 1, tempCoord[i, j]);
-                                    tempCoord2[j] = rawDataToCluster[i].a[j];
-                                }
-                                listOfPoints.Add(new Point(tempCoord2));
-                            }
+                            //double[,] tempCoord = new double[numberOfPoints, n];
+                            //List<Point> listOfPoints = new List<Point>();
+                            ////FOREL
+                            //for (int i = 0; i < numberOfPoints; i++)
+                            //{
+                            //    double[] tempCoord2 = new double[n];
+                            //    //Console.WriteLine("------------Point #{0}------------", i + 1);
+                            //    for (int j = 0; j < n; j++)
+                            //    {
+                            //        //tempCoord[i, j] = rawDataToCluster[i].a;
+                            //        //Console.WriteLine("Coordinate[{0}] of the point : {1}", j + 1, tempCoord[i, j]);
+                            //        tempCoord2[j] = rawDataToCluster[i].a[j];
+                            //    }
+                            //    listOfPoints.Add(new Point(tempCoord2));
+                            //}
 
-                            sb.AppendLine("\n\n----------------FOREL---------------\nTop 10 in cluster # " + clusterIdForFinding + ":");
-                            System.Console.WriteLine(sb);
-                            ForelAlgorithm fa = new ForelAlgorithm(n,listOfPoints, radius);
-                            fa.findTopTen(pointIdForFinding);
+                            //sb.AppendLine("\n\n----------------FOREL---------------\nTop 10 in cluster # " + clusterIdForFinding + ":");
+                            //System.Console.WriteLine(sb);
+                            //ForelAlgorithm fa = new ForelAlgorithm(n,listOfPoints, radius);
+                            //fa.findTopTen(pointIdForFinding);
                         }
                     }
                     else System.Console.WriteLine("\nNot found.");
@@ -267,7 +268,7 @@ namespace CourseWorkConsole
                 else System.Console.WriteLine("\nNot found.");
 
 
-            } while (true);
+           // } while (true);
         }
 
         private void InitilizeRawData(int numberOfPoints)

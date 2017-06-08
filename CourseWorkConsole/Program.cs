@@ -315,7 +315,52 @@ namespace CourseWorkConsole
             alg2.Init(numberOfPoints);
             //Console.Write("\nEnter point id for which you want to find simular points: ");
             //int pointId = Convert.ToInt32(Console.ReadLine());
-            //alg1.findTopTen(pointId);
+            
+
+
+            int pointIdForFinding;
+            do
+            {
+                string s = "";
+                System.Console.Write("\nEnter point id for which you want to find simular points: ");
+                ConsoleKeyInfo key;
+                
+                do
+                {
+                    key = Console.ReadKey(true);
+                    if (key.Key != ConsoleKey.Backspace)
+                    {
+                        double val = 0;
+                        bool _x = double.TryParse(key.KeyChar.ToString(), out val);
+                        // Convert.ToInt32(key.KeyChar) == 46)//44-coma, 46-spot
+                        if (_x)
+                        {
+                            s += key.KeyChar;
+                            Console.Write(key.KeyChar);
+                        }
+                    }
+                    else
+                    {
+                        if (key.Key == ConsoleKey.Backspace && s.Length > 0)
+                        {
+                            s = s.Substring(0, (s.Length - 1));
+                            Console.Write("\b \b");
+                        }
+                    }
+                }
+                // Stops Receving Keys Once Enter is Pressed
+                while (key.Key != ConsoleKey.Enter);
+
+                Console.WriteLine();
+                //Console.WriteLine("The Value You entered is : " + s);
+                pointIdForFinding = Int32.Parse(s);
+            } while (pointIdForFinding <= 0);
+
+            Console.WriteLine("\n------------------FOREL--------------\n");
+            alg1.findTopTen(pointIdForFinding);
+
+            Console.WriteLine("-----------------K-MEANS-------------");
+            alg2.FindTopNearestPointsInClaster(pointIdForFinding);
 
             Console.ReadKey();
         }
