@@ -277,9 +277,9 @@ namespace CourseWorkConsole
                             numberOfClusters = Convert.ToInt32(temp[0]);
                             Console.WriteLine("Dimension of point: {0}", _DIMENSION);
                             Console.WriteLine("Claster radius: {0}", radius);
-                            double[] coordTemp = new double[_DIMENSION];
                             for (int i = 0; myReadStream.Peek() >= 0; i++)   //repeat rows= ... times
                             {
+                                double[] coordTemp = new double[_DIMENSION];
                                 temp = myReadStream.ReadLine().Split(' ');
                                 for (int j = 0; j < _DIMENSION; j++)
                                 {

@@ -71,6 +71,10 @@ namespace CourseWorkConsole
                     if (count == 10) break;
                 }
             }
+            if (orderedClaster.Count() == 1)
+            {
+                Console.WriteLine("There are no closest points in the cluster.");
+            }
         }
         /// <summary>Разбивает список точек на несколько кластеров, которые тоже хранятся как списки.</summary>
         /// <param name="Points">Список точек</param>
