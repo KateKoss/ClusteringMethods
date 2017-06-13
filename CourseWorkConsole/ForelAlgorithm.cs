@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 
 namespace CourseWorkConsole
 {
@@ -69,6 +70,10 @@ namespace CourseWorkConsole
                     }
                     if (count == 10) break;
                 }
+            }
+            if (orderedClaster.Count() == 1)
+            {
+                Console.WriteLine("There are no closest points in the cluster.");
             }
         }
         /// <summary>Разбивает список точек на несколько кластеров, которые тоже хранятся как списки.</summary>

@@ -21,7 +21,7 @@ namespace CourseWorkConsole
         }
         private int dimension;//размерность
         private double[] coordinates;
-        private static int countId = 0;
+        private static int countId = -1;
         private int pointId;
         private double distanceToSomePoint;
         public double getDistanceToSomePoint() { return this.distanceToSomePoint; }
