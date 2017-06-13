@@ -281,7 +281,7 @@ namespace CourseWorkConsole
                             {
                                 double[] coordTemp = new double[_DIMENSION];
                                 temp = myReadStream.ReadLine().Split(' ');
-                                var coordTemp = new double[_DIMENSION];
+                                
                                 for (int j = 0; j < _DIMENSION; j++)
                                 {
                                     //FOREL
@@ -290,10 +290,7 @@ namespace CourseWorkConsole
                                 listOfPoints.Add(new Point(coordTemp));
 
                                 //K-MEANS
-                                dp = new DataPointKmeans(_DIMENSION);
-                                dp.pointId = i;
-                                dp.a = coordTemp;
-                                dp.Cluster = i;
+                               
                                 rawDataToCluster.Add(new DataPointKmeans(_DIMENSION) { pointId = i,  a = coordTemp, Cluster = i});
                             }
                         }
