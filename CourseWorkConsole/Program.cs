@@ -275,23 +275,24 @@ namespace CourseWorkConsole
                             numberOfClusters = Convert.ToInt32(temp[0]);
                             Console.WriteLine("Dimension of point: {0}", _DIMENSION);
                             Console.WriteLine("Claster radius: {0}", radius);
-                            double[] coordTemp = new double[_DIMENSION];
+                            DataPointKmeans dp;
                             for (int i = 0; myReadStream.Peek() >= 0; i++)   //repeat rows= ... times
                             {
                                 temp = myReadStream.ReadLine().Split(' ');
+                                var coordTemp = new double[_DIMENSION];
                                 for (int j = 0; j < _DIMENSION; j++)
                                 {
-                                    //FOREl
+                                    //FOREL
                                     coordTemp[j] = Convert.ToDouble(temp[j]);
                                 }
                                 listOfPoints.Add(new Point(coordTemp));
 
                                 //K-MEANS
-                                DataPointKmeans dp = new DataPointKmeans(_DIMENSION);
+                                dp = new DataPointKmeans(_DIMENSION);
                                 dp.pointId = i;
                                 dp.a = coordTemp;
                                 dp.Cluster = i;
-                                rawDataToCluster.Add(dp);
+                                rawDataToCluster.Add(new DataPointKmeans(_DIMENSION) { pointId = i,  a = coordTemp, Cluster = i});
                             }
                         }
                         catch (Exception ex) { Console.WriteLine(ex); }

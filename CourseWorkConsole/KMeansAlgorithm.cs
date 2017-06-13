@@ -31,8 +31,8 @@ namespace CourseWorkConsole
             {
                 clusters.Add(new DataPointKmeans(n) { Cluster = i });
             }
-            //System.Console.WriteLine("Data BEFORE normalizing-------------------");
-            //ShowData(rawDataToCluster);
+            System.Console.WriteLine("Data BEFORE normalizing-------------------");
+            ShowData(rawDataToCluster);
             NormalizeData();
 
             //System.Console.WriteLine("Data AFTER normalizing-------------------");
